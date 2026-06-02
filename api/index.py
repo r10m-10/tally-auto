@@ -4,6 +4,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv, set_key
 from tkinter import filedialog
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 
 def upd_form():
     payload = {
@@ -221,3 +222,19 @@ for i, row in ws.iterrows():
     add_conditiion(name)
 
     upd_form()
+
+app = Flask(__name__, template_folder='../templates', static_folder='../static')
+app.secret_key = "secretkey"
+
+@app.route('/')
+def index():
+    if 'token' in session:
+        return redirect(url_for('forms'))
+    else:
+        return render_template('index.html')
+        
+@app.route('/auth', methods=['POST'])
+def auth():
+    session['token'] = request.form['input_name']
+    return redirect(url_for('forms'))
+
