@@ -1,0 +1,57 @@
+* {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+body {
+    background-color: #0d1117;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: clamp(48px, 10vw, 96px);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 2px;
+}
+
+.accent{
+    text-shadow: 0 0 20px rgba(13, 110, 253, 0.4), 0 0 60px rgba(13, 110, 253, 0.15);
+}
+
+.accent2{
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.15);
+}
+
+.input-group {
+    width: 60%;
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.2), 0 0 60px rgba(13, 110, 253, 0.08);
+    border-radius: 8px;
+    max-width: 700px;
+    width: 60%;
+    font-size: 18px;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 30px rgba(13, 110, 253, 0.5), 0 0 80px rgba(13, 110, 253, 0.15);
+    border-color: rgb(13, 110, 253);
+}
+
+.form-control {
+    height: 70px;   
+}
+
+.btn-container {
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.btn {
+    margin-top: 150px;
+    font-size: 24px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+}

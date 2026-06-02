@@ -211,17 +211,17 @@ for i in blocks:
         pass
 info.pop()
 
-path = filedialog.askopenfilename(title="Select products file",filetypes=[("CSV files", "*.csv")])
-ws = pd.read_csv(f"{path}", dtype=str, header=0)
-
-for i, row in ws.iterrows():
-    name, mrp, offer, ppu, exp = row
-    add_dropdown(name)
-    add_price(name, mrp)
-    add_to_table(name, mrp, ppu, offer, exp)
-    add_conditiion(name)
-
-    upd_form()
+#path = filedialog.askopenfilename(title="Select products file",filetypes=[("CSV files", "*.csv")])
+#ws = pd.read_csv(f"{path}", dtype=str, header=0)
+#
+#for i, row in ws.iterrows():
+#    name, mrp, offer, ppu, exp = row
+#    add_dropdown(name)
+#    add_price(name, mrp)
+#    add_to_table(name, mrp, ppu, offer, exp)
+#    add_conditiion(name)
+#
+#    upd_form()
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 app.secret_key = "secretkey"
@@ -235,6 +235,10 @@ def index():
         
 @app.route('/auth', methods=['POST'])
 def auth():
-    session['token'] = request.form['input_name']
+    data = request.get_json()
+    exp = data['expression']
+    session['token'] = exp
     return redirect(url_for('forms'))
 
+if __name__ == '__main__':
+    app.run(debug=True)
