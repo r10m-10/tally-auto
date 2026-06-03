@@ -221,16 +221,18 @@ def auth():
 
 @app.route('/forms')
 def forms():
-    token = session['token']
-    data = tally_api(token)
-    forms = get_forms(data)
-    f_name = list(forms)
-    session['forms'] = forms
-    return render_template('forms.html', f_name=f_name)
+    if 'token' in session:
+        token = session['token']
+        data = tally_api(token)
+        forms = get_forms(data)
+        session['forms'] = forms
+        return render_template('forms.html', forms=forms)
+    else:
+        return redirect(url_for('index'))
 
-@app.route('/update', methods=['POST'])
-def update():
-    pass
+@app.route('/update/<selec_id>')
+def update(selec_id):
+    return selec_id
 
 if __name__ == '__main__':
     app.run(debug=True)

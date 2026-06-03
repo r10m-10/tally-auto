@@ -20,8 +20,8 @@
         </h1>
 
         <div class="list-group list-group-numbered">
-            {% for i in f_name %}
-                <button type="button" class="list-group-item list-group-item-action list-group-item-dark">{{i}}</button>
+            {% for i in forms %}
+                <a href="/update/{{forms[i]}}" class="list-group-item list-group-item-action list-group-item-dark">{{i}}</a>
             {% endfor %}
         </div>
 
