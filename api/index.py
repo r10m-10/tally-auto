@@ -1,10 +1,7 @@
 import requests
 import uuid
 import pandas as pd
-import os
-from dotenv import load_dotenv, set_key
-from tkinter import filedialog
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+from flask import Flask, request, render_template, session, redirect, url_for
 
 def upd_form(blocks, selec_id, token):
     headers = {"Authorization" : f"Bearer {token}"}
@@ -14,7 +11,7 @@ def upd_form(blocks, selec_id, token):
     }
     patch_headers = {**headers, "Content-Type": "application/json"}
     response = requests.patch(url, headers=patch_headers, json=payload)
-    print(response.status_code, response.text)
+    return response.status_code
 
 def add_dropdown(name, blocks, dropdown_option):
     last = dropdown_option[-1]
@@ -190,18 +187,6 @@ def form_struct(data):
     info.pop()
     return blocks, calculated_fields, dropdown_option, conditional_logic, info
 
-#path = filedialog.askopenfilename(title="Select products file",filetypes=[("CSV files", "*.csv")])
-#ws = pd.read_csv(f"{path}", dtype=str, header=0)
-#
-#for i, row in ws.iterrows():
-#    name, mrp, offer, ppu, exp = row
-#    add_dropdown(name)
-#    add_price(name, mrp)
-#    add_to_table(name, mrp, ppu, offer, exp)
-#    add_conditiion(name)
-#
-#    upd_form()
-
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 app.secret_key = "secretkey"
 
@@ -230,9 +215,24 @@ def forms():
     else:
         return redirect(url_for('index'))
 
-@app.route('/update/<selec_id>')
+@app.route('/update/<selec_id>', methods=['GET', 'POST'])
 def update(selec_id):
-    return selec_id
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    if request.method == 'GET':
+        return render_template('update.html')
+    else:
+        token = session['token']
+        data = tally_api(token, selec_id)
+        blocks, calculated_fields, dropdown_option, conditional_logic, info = form_struct(data)
+        file = request.files['csv_file']
+        ws = pd.read_csv(file, dtype=str, header=0)
+        for i, row in ws.iterrows():
+            name, mrp, offer, ppu, exp = row
+            add_dropdown(name, blocks, dropdown_option)
+            add_price(name, ppu, blocks, calculated_fields)
+            add_to_table(name, mrp, ppu, offer, exp, blocks, info)
+            add_conditiion(name, blocks, conditional_logic, dropdown_option)
+        code = upd_form(blocks, selec_id, token)
+        if code == 200:
+            return render_template('update.html', result="success")
+        else:
+            return render_template('update.html', result="error")

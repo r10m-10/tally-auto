@@ -37,7 +37,7 @@ h1 {
     border-color: rgb(13, 110, 253);
 }
 
-.form-control {
+#floatingInputGroup1 {
     height: 70px;   
 }
 
@@ -48,7 +48,7 @@ h1 {
     align-items: flex-start;
 }
 
-.btn {
+#confirm {
     margin-top: 150px;
     font-size: 24px;
     opacity: 0;
@@ -57,7 +57,30 @@ h1 {
 }
 
 .list-group{
+    margin-top: 32px;
     width: 40%;
     font-size: 20px;
     box-shadow: 0 0 20px rgba(13, 110, 253, 0.4), 0 0 60px rgba(13, 110, 253, 0.3);
+    text-transform: uppercase;
+}
+
+#inputGroupFileAddon04{
+    font-size: 22px;
+    width: 20%;
+}
+
+#inputGroupFile04{
+    font-size: 22px;
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.4), 0 0 60px rgba(13, 110, 253, 0.3);
+}
+
+#fileUploadForm{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.modal-body{
+    font-size: 22px;
+    font-weight: bold;
 }

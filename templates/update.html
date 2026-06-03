@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tally Automation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+        <h1 class="mb-4 shadow-lg"><span class="accent2">UPLOAD</span>
+            <span class="accent text-primary">CSV</span>
+            <span class="accent2">FILE</span>
+        </h1>
+
+        <form method="POST" enctype="multipart/form-data" id="fileUploadForm">
+            <div class="input-group input-group-lg">
+                <input type="file" name="csv_file" class="form-control" id="inputGroupFile04"
+                    aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04">UPLOAD</button>
+            </div>
+        </form>
+
+        <div class="modal fade" id="success-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        FORM UPDATED SUCESSFULLY!
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">CLOSE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        ERROR OCCURED DURING UPDATION! PLEASE CHECK IF UPLOADED DATA IS IN THE CORRECT FORMAT.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">CLOSE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const result = "{{ result }}";
+
+        if (result === "success") {
+
+            const modalElement = document.getElementById("success-modal");
+            const modal = new bootstrap.Modal(modalElement);
+
+            modal.show();
+
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                window.location = '/forms';
+            });
+
+        } else if (result === "error") {
+
+            const modalElement = document.getElementById("error-modal");
+            const modal = new bootstrap.Modal(modalElement);
+
+            modal.show();
+
+        }
+    </script>
+</body>
+
+</html>

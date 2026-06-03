@@ -21,7 +21,7 @@
 
         <div class="list-group list-group-numbered">
             {% for i in forms %}
-                <a href="/update/{{forms[i]}}" class="list-group-item list-group-item-action list-group-item-dark">{{i}}</a>
+                <a href="/update/{{forms[i]}}" class="list-group-item list-group-item-action">{{i}}</a>
             {% endfor %}
         </div>
 
@@ -29,7 +29,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>
