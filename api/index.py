@@ -6,7 +6,9 @@ from dotenv import load_dotenv, set_key
 from tkinter import filedialog
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 
-def upd_form():
+def upd_form(blocks, selec_id, token):
+    headers = {"Authorization" : f"Bearer {token}"}
+    url = f"https://api.tally.so/forms/{selec_id}"
     payload = {
         "blocks": blocks
     }
@@ -14,7 +16,7 @@ def upd_form():
     response = requests.patch(url, headers=patch_headers, json=payload)
     print(response.status_code, response.text)
 
-def add_dropdown(name):
+def add_dropdown(name, blocks, dropdown_option):
     last = dropdown_option[-1]
     last["payload"]['isLast'] = False
     last_pos = blocks.index(last)
@@ -29,7 +31,7 @@ def add_dropdown(name):
     last = dropdown_option[-1]
     last_pos = blocks.index(last)
 
-def add_price(name, ppu):
+def add_price(name, ppu, blocks, calculated_fields):
     struct = {'uuid': 'e4efdaa7-7ecd-4135-a06e-9bd0ae394bed', 'name': 'price_9', 'type': 'NUMBER', 'value': 28}
     p_uid = str(uuid.uuid4())
     struct["uuid"] = p_uid
@@ -43,7 +45,7 @@ def add_price(name, ppu):
     struct_2['field']['title'] = f"price_{name}"
     blocks[0]['payload']['mentions'].append(struct_2)
 
-def add_to_table(name, mrp, ppu, offer, expiry):
+def add_to_table(name, mrp, ppu, offer, expiry, blocks, info):
     last = info[-1]
     last_pos = blocks.index(last)
 
@@ -87,7 +89,7 @@ def add_to_table(name, mrp, ppu, offer, expiry):
         last = info[-1]
         last_pos = blocks.index(last)
 
-def add_conditiion(name):
+def add_conditiion(name, blocks, conditional_logic, dropdown_option):
     last = conditional_logic[-1]
     last_pos = blocks.index(last)
 
@@ -148,68 +150,45 @@ def add_conditiion(name):
     last = dropdown_option[-1]
     last_pos = blocks.index(last)
 
-#------------------------------------------------------MAIN LOOP-----------------------------------------------------------------------------------------------
-
-load_dotenv()
-token = os.getenv("TALLY_TOKEN")
-
-if token:
-    print('''1. Continue
-2. Update API Key''')
-    ch = int(input("Enter choice: "))
-    if ch == 2:
-        token = input("Enter your Tally API key: ")
-        set_key(".env", "TALLY_TOKEN", token)
-else:
-    token = input("Enter your Tally API key: ")
-    set_key(".env", "TALLY_TOKEN", token)
-
-headers = {
-    "Authorization" : f"Bearer {token}"
-}
-url = "https://api.tally.so/forms"
-response = requests.get(url, headers=headers)
-data= response.json()
-
-forms = data['items']
-li_id = []
-li_name = []
-for i in forms:
-    li_id.append(i["id"])
-    li_name.append(i["name"])
-count = 1
-for i in li_name:
-    print(count,".",i)
-    count+=1
-
-ch = int(input("Select a form (enter number):  "))
-selec_id = li_id[ch-1]
-
-url = f"https://api.tally.so/forms/{selec_id}"
-response = requests.get(url, headers=headers)
-data= response.json()
-
-blocks = data["blocks"]
-
-calculated_fields = []
-dropdown_option = []
-conditional_logic = []
-info = []
-
-for i in blocks:
-    if i["type"] == "DROPDOWN_OPTION":
-        dropdown_option.append(i)
-    elif i["type"] == "CALCULATED_FIELDS":
-        if i["payload"]["calculatedFields"][0]["value"] != 0:
-            calculated_fields.append(i)
-    elif i["type"] == "CONDITIONAL_LOGIC":
-        if i['payload']['conditionals'][0]['payload']['comparison'] == 'CONTAINS':
-            conditional_logic.append(i)
-    elif i["type"] == "TEXT" or i["type"] == "INPUT_NUMBER":
-        info.append(i)
+def tally_api(token, selec_id=''):
+    if selec_id == '':
+        url = "https://api.tally.so/forms"
     else:
-        pass
-info.pop()
+        url = f"https://api.tally.so/forms/{selec_id}"
+    headers = {"Authorization" : f"Bearer {token}"}
+    response = requests.get(url, headers=headers)
+    data= response.json()
+    return data
+
+def get_forms(data):
+    f = data['items']
+    forms = {}
+    for i in f:
+        forms[i["name"]] = i["id"]
+    return forms
+
+def form_struct(data):
+    blocks = data["blocks"]
+    calculated_fields = []
+    dropdown_option = []
+    conditional_logic = []
+    info = []
+
+    for i in blocks:
+        if i["type"] == "DROPDOWN_OPTION":
+            dropdown_option.append(i)
+        elif i["type"] == "CALCULATED_FIELDS":
+            if i["payload"]["calculatedFields"][0]["value"] != 0:
+                calculated_fields.append(i)
+        elif i["type"] == "CONDITIONAL_LOGIC":
+            if i['payload']['conditionals'][0]['payload']['comparison'] == 'CONTAINS':
+                conditional_logic.append(i)
+        elif i["type"] == "TEXT" or i["type"] == "INPUT_NUMBER":
+            info.append(i)
+        else:
+            pass
+    info.pop()
+    return blocks, calculated_fields, dropdown_option, conditional_logic, info
 
 #path = filedialog.askopenfilename(title="Select products file",filetypes=[("CSV files", "*.csv")])
 #ws = pd.read_csv(f"{path}", dtype=str, header=0)
@@ -239,6 +218,19 @@ def auth():
     exp = data['expression']
     session['token'] = exp
     return redirect(url_for('forms'))
+
+@app.route('/forms')
+def forms():
+    token = session['token']
+    data = tally_api(token)
+    forms = get_forms(data)
+    f_name = list(forms)
+    session['forms'] = forms
+    return render_template('forms.html', f_name=f_name)
+
+@app.route('/update', methods=['POST'])
+def update():
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True)

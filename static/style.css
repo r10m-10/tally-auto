@@ -55,3 +55,9 @@ h1 {
     visibility: hidden;
     transition: opacity 0.2s ease;
 }
+
+.list-group{
+    width: 40%;
+    font-size: 20px;
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.4), 0 0 60px rgba(13, 110, 253, 0.3);
+}

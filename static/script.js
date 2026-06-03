@@ -18,7 +18,7 @@ button.addEventListener('click', function(){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ expression: expression })
     })
-    .then(function(response) {
-        return response.json()
+    .then(function() {
+        window.location = '/forms'
     })
 })
