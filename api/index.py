@@ -108,7 +108,7 @@ def add_conditiion(name, blocks, conditional_logic, dropdown_option):
                     tot_uid = j['uuid']
                     tot_grp_uid = i['groupUuid']
         elif i["type"] == "TEXT":
-            if i['payload']['safeHTMLSchema'][0][0] == name:
+            if len(i['payload']['safeHTMLSchema']) > 0 and i['payload']['safeHTMLSchema'][0][0] == name:
                 selec_uid = i['uuid']
                 mrp_uid = blocks[blocks.index(i)+1]['uuid']
                 offer_uid = blocks[blocks.index(i)+2]['uuid']
