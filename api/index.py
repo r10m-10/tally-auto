@@ -180,11 +180,14 @@ def form_struct(data):
         elif i["type"] == "CONDITIONAL_LOGIC":
             if i['payload']['conditionals'][0]['payload']['comparison'] == 'CONTAINS':
                 conditional_logic.append(i)
-        elif i["type"] == "TEXT" or i["type"] == "INPUT_NUMBER":
-            info.append(i)
+        elif i["type"] == "TEXT":
+            if len(i['payload']['safeHTMLSchema']) > 0 and i['payload']['columnRatio'] in [24,10,18,14]:
+                info.append(i)
+        elif i["type"] == "INPUT_NUMBER":
+            if i['payload']['placeholder'] == 'qty':
+                info.append(i)
         else:
             pass
-    info.pop()
     return blocks, calculated_fields, dropdown_option, conditional_logic, info
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
